@@ -1,9 +1,2 @@
 spacy==3.7.5
 pandas==2.3.3
-# Optional: install spaCy models separately with
-#   python -m spacy download en_core_web_sm
-# Do NOT include scripts, local file paths, or Python version pins in requirements.txt
-
-# If you need more packages for TopicModeling, add them here, e.g.:
-# numpy==1.26.4
-# scikit-learn==1.4.2
