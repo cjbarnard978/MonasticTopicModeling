@@ -62,7 +62,6 @@ def extract_entities(text, nlp):
             'start': ent.start_char,
             'end': ent.end_char,
             'confidence': ent._.prob if hasattr(ent._, 'prob') else None,
-            # 'lemma' will be filled later if stanza is available
             'lemma': None,
         })
 
@@ -160,7 +159,7 @@ def main():
   
     print(f"Found {len(entities)} noun declensions")
     
-    # Show found sports
+
     if entities:
         print("\n entities found:")
         noun_declensions = list(set([ent['text'] for ent in entities]))
