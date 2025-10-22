@@ -1,0 +1,18 @@
+# Virtual environments
+venv/
+ENV/
+env/
+tm_py311/
+TM_env/
+.venv/
+
+# OS files
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+
+# Torch large binaries (if any slipped in)
+*.pt
+*.pth
