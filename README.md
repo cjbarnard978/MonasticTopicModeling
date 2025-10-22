@@ -1,0 +1,1 @@
+This requires a pyenv 3.11 virtual environment. Please see setup_spacy_tim_py311.sh in this folder for setup instructions. 
