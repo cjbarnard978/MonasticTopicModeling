@@ -9,6 +9,7 @@
 #source TM_env/bin/activate
 
 import spacy
+import stanza
 import pandas as pd
 import argparse
 import sys
@@ -22,8 +23,6 @@ def load_spacy_model(model_name="la_core_web_sm"):
         print(f"model loaded: {model_name}")
         return nlp
     except Exception:
-        # If the specific Latin pipeline isn't available, fall back to a blank Latin pipeline
-        # so the rest of the script (ruler, entity matching) still works.
         print(f"spaCy model '{model_name}' not found — falling back to a blank 'la' pipeline")
         nlp = spacy.blank("la")
         return nlp
@@ -37,8 +36,6 @@ def setup_custom_entities(nlp):
         "Hibernias"
     ]
 
-    # Add an entity ruler. If the pipeline has a 'ner' component, add the ruler before it;
-    # otherwise add the ruler to the end of the pipeline (blank pipelines have no 'ner').
     if "ner" in nlp.pipe_names:
         ruler = nlp.add_pipe("entity_ruler", before="ner")
     else:
@@ -51,23 +48,24 @@ def setup_custom_entities(nlp):
         print(f"{declension}")
     return nlp
 def extract_entities(text, nlp):
-
     doc = nlp(text)
     entities = []
 
     noun_declensions = {"NOUN_DECLENSION"}
-    for ent in doc.ents: 
+    for ent in doc.ents:
         if ent.label_ not in noun_declensions:
             continue
         entities.append({
             'text': ent.text,
             'label': ent.label_,
-            'label_description':'custom noun declension',
+            'label_description': 'custom noun declension',
             'start': ent.start_char,
             'end': ent.end_char,
-            'confidence': ent._.prob if hasattr(ent._, 'prob') else None
+            'confidence': ent._.prob if hasattr(ent._, 'prob') else None,
+            # 'lemma' will be filled later if stanza is available
+            'lemma': None,
         })
-    
+
     return entities
 
 def save_entities_to_csv(entities, output_file): 
@@ -89,6 +87,8 @@ def main():
     parser.add_argument('input_file', help='Path to the text file to analyze')
     parser.add_argument('--model', default='la_core_web_sm', 
                        help='spaCy model to use (default: la_core_web_sm)')
+    parser.add_argument('--use-stanza', action='store_true',
+                       help='If set, use Stanza to compute lemmas for matched entities')
     parser.add_argument('--output', default='ireland_mentions', 
                        help='Base name for output files (default: ireland_mentions)')
     parser.add_argument('--max-chars', type=int, default=None,
@@ -105,6 +105,15 @@ def main():
 
     nlp = load_spacy_model(args.model)
     nlp = setup_custom_entities(nlp)
+
+    stanza_nlp = None
+    if args.use_stanza:
+        try:
+            stanza_nlp = stanza.Pipeline('la', processors='tokenize,pos,lemma', use_gpu=False)
+            print('Stanza pipeline initialized for Latin')
+        except Exception as e:
+            print('Failed to initialize Stanza pipeline:', e)
+            stanza_nlp = None
     
   
     try:
@@ -132,6 +141,17 @@ def main():
     # Extract entities
     print("🔍 Extracting noun declension entities...")
     entities = extract_entities(text, nlp)
+
+    # If stanza is available, compute lemmas for each entity text
+    if stanza_nlp and entities:
+        for ent in entities:
+            try:
+                doc = stanza_nlp(ent['text'])
+                # take lemma of first word (suitable for single-word declensions)
+                lemmas = [w.lemma for s in doc.sentences for w in s.words]
+                ent['lemma'] = ' '.join(lemmas) if lemmas else None
+            except Exception:
+                ent['lemma'] = None
     
     if not entities:
         print("no mentions of Hibernia.")
