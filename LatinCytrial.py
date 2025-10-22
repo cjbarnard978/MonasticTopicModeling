@@ -16,14 +16,14 @@ from pathlib import Path
 
 
 
-def load_spacy_model(model_name="la_core_web_sm")
+def load_spacy_model(model_name="la_core_web_sm"):
     try: 
         nlp = spacy.load("la_core_web_sm")
         print("model loaded")
     except OSError:
         print("latin model not found")
         sys.exit(1)
-def setup_custom_entities(nlp)
+def setup_custom_entities(nlp):
     hibernia_declensions = [
         "Hibernia",
         "Hiberniae",
@@ -42,14 +42,14 @@ def setup_custom_entities(nlp)
         print(f"{declension}")
 def extract_entities(text, nlp):
 
-    doc = nlp(text):
+    doc = nlp(text)
     entities = []
 
     noun_declensions = {"NOUN_DECLENSION"}
     for ent in doc.ents: 
         if ent.label_ not in noun_declensions:
             continue
-        entities_append({
+        entities.append({
             'text': ent.text,
             'label': ent.label_,
             'label_description':'custom noun declension',
@@ -75,7 +75,7 @@ def save_entities_to_csv(entities, output_file):
 
 def main():
    
-    parser = argparse.ArgumentParser(description='Hibernia Noun Declension Identification using LatinCy)
+    parser = argparse.ArgumentParser(description='Hibernia Noun Declension Identification using LatinCy')
     parser.add_argument('input_file', help='Path to the text file to analyze')
     parser.add_argument('--model', default='la_core_web_sm', 
                        help='spaCy model to use (default: la_core_web_sm)')
@@ -130,7 +130,7 @@ def main():
     if entities:
         print("\n entities found:")
         noun_declensions = list(set([ent['text'] for ent in entities]))
-        for noun in sorted(noun_declensions)):
+        for noun in sorted(noun_declensions):
             count = sum(1 for ent in entities if ent['text'] == noun)
             print(f"   • {noun}: {count} occurrence{'s' if count > 1 else ''}")
     
