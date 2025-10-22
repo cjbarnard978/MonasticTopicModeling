@@ -17,12 +17,16 @@ from pathlib import Path
 
 
 def load_spacy_model(model_name="la_core_web_sm"):
-    try: 
-        nlp = spacy.load("la_core_web_sm")
-        print("model loaded")
-    except OSError:
-        print("latin model not found")
-        sys.exit(1)
+    try:
+        nlp = spacy.load(model_name)
+        print(f"model loaded: {model_name}")
+        return nlp
+    except Exception:
+        # If the specific Latin pipeline isn't available, fall back to a blank Latin pipeline
+        # so the rest of the script (ruler, entity matching) still works.
+        print(f"spaCy model '{model_name}' not found — falling back to a blank 'la' pipeline")
+        nlp = spacy.blank("la")
+        return nlp
 def setup_custom_entities(nlp):
     hibernia_declensions = [
         "Hibernia",
@@ -33,13 +37,19 @@ def setup_custom_entities(nlp):
         "Hibernias"
     ]
 
-    ruler = nlp.add_pipe("entity_ruler", before ="ner")
+    # Add an entity ruler. If the pipeline has a 'ner' component, add the ruler before it;
+    # otherwise add the ruler to the end of the pipeline (blank pipelines have no 'ner').
+    if "ner" in nlp.pipe_names:
+        ruler = nlp.add_pipe("entity_ruler", before="ner")
+    else:
+        ruler = nlp.add_pipe("entity_ruler")
     patterns = [{"label": "NOUN_DECLENSION", "pattern": declension} for declension in hibernia_declensions]
     ruler.add_patterns(patterns)
 
     print("ruler added")
     for declension in hibernia_declensions:
         print(f"{declension}")
+    return nlp
 def extract_entities(text, nlp):
 
     doc = nlp(text)
@@ -88,14 +98,12 @@ def main():
 
     input_path = Path(args.input_file)
     if not input_path.exists():
-        print ("Error: Input file '{args.input_file}' not found.")
+        print (f"Error: Input file '{args.input_file}' not found.")
         sys.exit(1)
     
     print(f"Reading file: {args.input_file}")
-    
+
     nlp = load_spacy_model(args.model)
-    
-    
     nlp = setup_custom_entities(nlp)
     
   
@@ -112,6 +120,12 @@ def main():
     if args.max_chars and len(text) > args.max_chars:
         text = text[:args.max_chars]
         print(f"⚠️  Limited processing to first {args.max_chars} characters")
+
+    # Ensure spaCy's max_length is large enough for this input; if not, raise it with a warning.
+    if len(text) > nlp.max_length:
+        print(f"⚠️  Input length ({len(text):,}) exceeds nlp.max_length ({nlp.max_length}). Increasing limit...")
+        # Increase a bit beyond the text length to be safe
+        nlp.max_length = len(text) + 1000
     
     print(f"📝 Processing {len(text):,} characters of text...")
     
@@ -141,4 +155,4 @@ def main():
     print(f"\nExtraction complete! Results saved to: {output_file}")
 
 if __name__ == "__main__":
-    main()
+    main() 
