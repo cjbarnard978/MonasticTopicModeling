@@ -22,8 +22,8 @@ if missing:
     import subprocess
     subprocess.check_call([sys.executable, "-m", "pip", "install"] + missing)
 
-pdf_dir = Path('/Users/ceciliabarnard/Desktop//8510/TopicModeling/pdfs')
-output_dir = Path('/Users/ceciliabarnard/Desktop/8510/TopicModeling/pdfs/converted_images')
+pdf_dir = Path('/Users/ceciliabarnard/Desktop//8510/TopicModeling/pdfstoedit')
+output_dir = Path('/Users/ceciliabarnard/Desktop/8510/TopicModeling/pdfstoedit/editedpdfimages')
 output_dir.mkdir(exist_ok=True)
 
 for pdf_path in pdf_dir.glob('*.pdf'):
