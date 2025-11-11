@@ -7,7 +7,7 @@
 
 #python3 -m venv topicmodel_env
 #source topicmodel_env/bin/activate
-
+#
 # CLTK version of NER script
 import cltk
 import pandas as pd
