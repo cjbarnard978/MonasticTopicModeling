@@ -8,6 +8,12 @@
 #python3 -m venv topicmodel_env
 #source topicmodel_env/bin/activate
 
+import spacy
+import pandas as pd
+import argparse
+import sys
+from pathlib import Path
+
 def load_spacy_model(model_name="la_core_web_sm"):
     try:
         nlp = spacy.load(model_name)
@@ -17,6 +23,7 @@ def load_spacy_model(model_name="la_core_web_sm"):
         print(f"spaCy model '{model_name}' not found — falling back to a blank 'la' pipeline")
         nlp = spacy.blank("la")
         return nlp
+
 def setup_custom_entities(nlp):
     hibernia_declensions = [
         "Hibernia",
@@ -38,6 +45,7 @@ def setup_custom_entities(nlp):
     for declension in hibernia_declensions:
         print(f"{declension}")
     return nlp
+
 def extract_entities(text, nlp):
     doc = nlp(text)
     entities = []
@@ -58,13 +66,6 @@ def extract_entities(text, nlp):
 
     return entities
 
-import stanza
-import pandas as pd
-import argparse
-import sys
-from pathlib import Path
-
-# List of Hibernia declensions to search for
 HIBERNIA_DECLENSIONS = [
     "Hibernia",
     "Hiberniae",
@@ -73,35 +74,6 @@ HIBERNIA_DECLENSIONS = [
     "Hiberniis",
     "Hibernias"
 ]
-
-def extract_entities_with_stanza(text, stanza_nlp):
-    entities = []
-    for declension in HIBERNIA_DECLENSIONS:
-        start = 0
-        while True:
-            idx = text.find(declension, start)
-            if idx == -1:
-                break
-            # Lemmatize using stanza
-            lemma = None
-            try:
-                doc = stanza_nlp(declension)
-                lemmas = [w.lemma for s in doc.sentences for w in s.words]
-                lemma = ' '.join(lemmas) if lemmas else None
-            except Exception:
-                lemma = None
-            entities.append({
-                'text': declension,
-                'label': 'HIBERNIA_DECLENSION',
-                'label_description': 'custom noun declension',
-                'start': idx,
-                'end': idx + len(declension),
-                'confidence': None,
-                'lemma': lemma,
-            })
-            start = idx + len(declension)
-    return entities
-
 
 def save_entities_to_csv(entities, output_file):
     if not entities:
@@ -114,9 +86,8 @@ def save_entities_to_csv(entities, output_file):
     entities_df.to_csv(output_path, index=False)
     print(f"Saved {len(entities)} entities to: {output_path}")
 
-
-
-    parser = argparse.ArgumentParser(description='Hibernia Noun Declension Identification using Stanza NLP')
+def main():
+    parser = argparse.ArgumentParser(description='Hibernia Noun Declension Identification using spaCy')
     parser.add_argument('input_file', help='Path to the text file to analyze')
     parser.add_argument('--output', default='ireland_mentions', help='Base name for output files (default: ireland_mentions)')
     parser.add_argument('--max-chars', type=int, default=None, help='Maximum characters to process (useful for large files)')
@@ -130,10 +101,11 @@ def save_entities_to_csv(entities, output_file):
     print(f"Reading file: {args.input_file}")
 
     try:
-        stanza_nlp = stanza.Pipeline('la', processors='tokenize,pos,lemma', use_gpu=False)
-        print('Stanza pipeline initialized for Latin')
+        nlp = load_spacy_model()
+        nlp = setup_custom_entities(nlp)
+        print('spaCy pipeline initialized for Latin')
     except Exception as e:
-        print('Failed to initialize Stanza pipeline:', e)
+        print('Failed to initialize spaCy pipeline:', e)
         sys.exit(1)
 
     try:
@@ -150,7 +122,7 @@ def save_entities_to_csv(entities, output_file):
     print(f"📝 Processing {len(text):,} characters of text...")
 
     print("🔍 Extracting noun declension entities...")
-    entities = extract_entities_with_stanza(text, stanza_nlp)
+    entities = extract_entities(text, nlp)
 
     if not entities:
         print("no mentions of Hibernia.")
@@ -169,4 +141,3 @@ def save_entities_to_csv(entities, output_file):
 
 if __name__ == "__main__":
     main()
-    save_entities_to_csv(entities, output_file)
