@@ -2,19 +2,20 @@
 
 #python3 -m venv topicmodel_env
 #source topicmodel_env/bin/activate
-
+#
 import spacy
 import pandas as pd
 import argparse
 import sys
 from pathlib import Path
 
-def load_spacy_model(model_name="la_core_web_sm"):
+def load_spacy_model(model_name="en_core_web_sm"):
     try:
         nlp = spacy.load(model_name)
+        nlp.max_length = 2000000
         print(f"model loaded: {model_name}")
         return nlp
-    except Exception as e:
+    except Exception as e:  
         print(f"spaCy model '{model_name}' not found or failed to load: {e}")
         nlp = spacy.blank("en")
         print("Loaded blank English pipeline instead.")
@@ -115,7 +116,7 @@ def main():
         with open(input_path, 'r', encoding='utf-8') as f:
             text = f.read()
     except UnicodeDecodeError:
-        with open(input_path, 'r', encoding='latin-1') as f:
+        with open(input_path, 'r', encoding='utf-8') as f:
             text = f.read()
 
     if args.max_chars and len(text) > args.max_chars:

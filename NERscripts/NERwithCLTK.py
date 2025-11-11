@@ -15,6 +15,8 @@ import argparse
 import sys
 from pathlib import Path
 
+
+
 # List of Hibernia declensions to search for
 HIBERNIA_DECLENSIONS = [
     "Hibernia",
@@ -80,7 +82,7 @@ def main():
 
     try:
         from cltk import NLP
-        cltk_nlp = NLP(language="lat")
+        cltk_nlp = NLP("lat")
         print('CLTK pipeline initialized for Latin')
     except Exception as e:
         print('Failed to initialize CLTK pipeline:', e)

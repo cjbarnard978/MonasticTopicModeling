@@ -115,7 +115,7 @@ def save_entities_to_csv(entities, output_file):
     print(f"Saved {len(entities)} entities to: {output_path}")
 
 
-
+def main():
     parser = argparse.ArgumentParser(description='Hibernia Noun Declension Identification using Stanza NLP')
     parser.add_argument('input_file', help='Path to the text file to analyze')
     parser.add_argument('--output', default='ireland_mentions', help='Base name for output files (default: ireland_mentions)')
@@ -169,4 +169,4 @@ def save_entities_to_csv(entities, output_file):
 
 if __name__ == "__main__":
     main()
-    save_entities_to_csv(entities, output_file)
+
