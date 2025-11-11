@@ -1,9 +1,4 @@
-#Hibernia 
-#Hiberniae
-#Hiberniam
-#Hiberniarum 
-#Hiberniis
-#Hibernias
+
 
 #python3 -m venv topicmodel_env
 #source topicmodel_env/bin/activate
@@ -19,60 +14,68 @@ def load_spacy_model(model_name="la_core_web_sm"):
         nlp = spacy.load(model_name)
         print(f"model loaded: {model_name}")
         return nlp
-    except Exception:
-        print(f"spaCy model '{model_name}' not found — falling back to a blank 'la' pipeline")
-        nlp = spacy.blank("la")
+    except Exception as e:
+        print(f"spaCy model '{model_name}' not found or failed to load: {e}")
+        nlp = spacy.blank("en")
+        print("Loaded blank English pipeline instead.")
         return nlp
 
 def setup_custom_entities(nlp):
-    hibernia_declensions = [
-        "Hibernia",
-        "Hiberniae",
-        "Hiberniam",
-        "Hiberniarum",
-        "Hiberniis",
-        "Hibernias"
+    Scottish_place_names = [
+        "Scotland",
+        "Scots",
+        "Kelso",
+        "Passelet",
+        "Aberbroth",
+        "Dryburgh",
+        "Dunfermline",
+        "Dunfermlyn",
+        "Inchaffrey",
+        "Newbattle"
     ]
 
     if "ner" in nlp.pipe_names:
         ruler = nlp.add_pipe("entity_ruler", before="ner")
     else:
         ruler = nlp.add_pipe("entity_ruler")
-    patterns = [{"label": "NOUN_DECLENSION", "pattern": declension} for declension in hibernia_declensions]
+    patterns = [{"label": "Scottish_place_names", "pattern": placename} for placename in Scottish_place_names]
     ruler.add_patterns(patterns)
 
     print("ruler added")
-    for declension in hibernia_declensions:
-        print(f"{declension}")
+    for placename in Scottish_place_names:
+        print(f"{placename}")
     return nlp
 
 def extract_entities(text, nlp):
     doc = nlp(text)
     entities = []
 
-    noun_declensions = {"NOUN_DECLENSION"}
+    Scottish_place_names = {"Scottish Place Names"}
     for ent in doc.ents:
-        if ent.label_ not in noun_declensions:
+        if ent.label_ not in Scottish_place_names:
             continue
         entities.append({
             'text': ent.text,
             'label': ent.label_,
-            'label_description': 'custom noun declension',
+            'label_description': 'Place name',
             'start': ent.start_char,
             'end': ent.end_char,
             'confidence': ent._.prob if hasattr(ent._, 'prob') else None,
-            'lemma': None,
         })
 
     return entities
 
-HIBERNIA_DECLENSIONS = [
-    "Hibernia",
-    "Hiberniae",
-    "Hiberniam",
-    "Hiberniarum",
-    "Hiberniis",
-    "Hibernias"
+Scottish_place_names = [
+        "Scotland",
+        "Scots",
+        "Kelso",
+        "Passelet",
+        "Aberbroth",
+        "Dryburgh",
+        "Dunfermline",
+        "Dunfermlyn",
+        "Inchaffrey",
+        "Newbattle"
 ]
 
 def save_entities_to_csv(entities, output_file):
@@ -87,9 +90,9 @@ def save_entities_to_csv(entities, output_file):
     print(f"Saved {len(entities)} entities to: {output_path}")
 
 def main():
-    parser = argparse.ArgumentParser(description='Hibernia Noun Declension Identification using spaCy')
+    parser = argparse.ArgumentParser(description='Scottish place name identifications using SpaCy')
     parser.add_argument('input_file', help='Path to the text file to analyze')
-    parser.add_argument('--output', default='ireland_mentions', help='Base name for output files (default: ireland_mentions)')
+    parser.add_argument('--output', default='scottish_places', help='Base name for output files (default: scottish_places)')
     parser.add_argument('--max-chars', type=int, default=None, help='Maximum characters to process (useful for large files)')
     args = parser.parse_args()
 
@@ -103,7 +106,7 @@ def main():
     try:
         nlp = load_spacy_model()
         nlp = setup_custom_entities(nlp)
-        print('spaCy pipeline initialized for Latin')
+        print('spaCy pipeline initialized')
     except Exception as e:
         print('Failed to initialize spaCy pipeline:', e)
         sys.exit(1)
@@ -121,14 +124,14 @@ def main():
 
     print(f"📝 Processing {len(text):,} characters of text...")
 
-    print("🔍 Extracting noun declension entities...")
+    print("🔍 Extracting place name entities...")
     entities = extract_entities(text, nlp)
 
     if not entities:
-        print("no mentions of Hibernia.")
+        print("no mentions of Scotland.")
         return
 
-    print(f"Found {len(entities)} noun declensions")
+    print(f"Found {len(entities)} place name entities")
     print("\n entities found:")
     noun_declensions = list(set([ent['text'] for ent in entities]))
     for noun in sorted(noun_declensions):

@@ -5,8 +5,8 @@
 #Hiberniis
 #Hibernias
 
-#python3 -m venv TM_env
-#source TM_env/bin/activate
+#python3 -m venv topicmodel_env
+#source topicmodel_env/bin/activate
 
 # CLTK version of NER script
 import cltk
