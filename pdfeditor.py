@@ -26,7 +26,7 @@ pdf_dir = Path('/Users/ceciliabarnard/Desktop//8510/TopicModeling/pdfstoedit')
 output_dir = Path('/Users/ceciliabarnard/Desktop/8510/TopicModeling/pdfstoedit/editedpdfimages')
 output_dir.mkdir(exist_ok=True)
 
-for pdf_path in pdf_dir.glob('*.pdf'):
+for pdf_path in pdf_dir.glob('*.pdfstoedit'):
     try:
         print(f'Processing: {pdf_path.name}')
         images = convert_from_path(pdf_path, output_folder=output_dir, fmt='png')
