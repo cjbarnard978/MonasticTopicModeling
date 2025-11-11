@@ -33,8 +33,8 @@ results_dir.mkdir(exist_ok=True)
 
 
 # Step 1: Convert images in 'editedpfimages' to grayscale, then OCR and save results
-edited_images_dir = Path('/Users/ceciliabarnard/Desktop/8510/TopicModeling/editedpfimages')
-grayscale_dir = Path('/Users/ceciliabarnard/Desktop/8510/TopicModeling/grayscale_images')
+edited_images_dir = Path('/Users/ceciliabarnard/Desktop/8510/TopicModeling/pdfstoedit/editedpdfimages')
+grayscale_dir = Path('/Users/ceciliabarnard/Desktop/8510/TopicModeling/pdfstoedit/editedpdfimages/grayscale_images')
 grayscale_dir.mkdir(exist_ok=True)
 
 for img_path in edited_images_dir.glob('*.png'):
@@ -57,5 +57,13 @@ for img_path in edited_images_dir.glob('*.png'):
         result_file = results_dir / (pdf_base + '.txt')
         with open(result_file, 'a', encoding='utf-8') as f:
             f.write(f'--- {img_path.name} ---\n{text}\n')
+
     except Exception as e:
         print(f'  ❌ Error processing {img_path.name}: {e}')
+
+# Integrate all .txt files in results_dir into one file
+all_txt_files = sorted(results_dir.glob('*.txt'))
+with open(results_dir / 'all_results.txt', 'w', encoding='utf-8') as outfile:
+    for txt_file in all_txt_files:
+        with open(txt_file, 'r', encoding='utf-8') as infile:
+            outfile.write(infile.read())

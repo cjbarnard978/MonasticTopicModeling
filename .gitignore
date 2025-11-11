@@ -5,6 +5,7 @@ env/
 tm_py311/
 TM_env/
 .venv/
+topicmodel_env/ 
 
 # OS files
 .DS_Store
@@ -16,3 +17,11 @@ TM_env/
 # Torch large binaries (if any slipped in)
 *.pt
 *.pth
+
+#large folders 
+pdfs/ 
+pdfstoedit/
+grayscale_images/ 
+converted_images/ 
+
+
