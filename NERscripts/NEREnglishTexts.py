@@ -32,6 +32,7 @@ def setup_custom_entities(nlp):
         "Dunfermline",
         "Dunfermlyn",
         "Inchaffrey",
+        "Scotch",
         "Newbattle"
     ]
 
