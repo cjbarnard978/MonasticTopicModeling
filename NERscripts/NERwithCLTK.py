@@ -1,23 +1,9 @@
-#Hibernia 
-#Hiberniae
-#Hiberniam
-#Hiberniarum 
-#Hiberniis
-#Hibernias
-
-#python3 -m venv topicmodel_env
-#source topicmodel_env/bin/activate
-#
-# CLTK version of NER script
 import cltk
 import pandas as pd
 import argparse
 import sys
 from pathlib import Path
 
-
-
-# List of Hibernia declensions to search for
 HIBERNIA_DECLENSIONS = [
     "Hibernia",
     "Hiberniae",

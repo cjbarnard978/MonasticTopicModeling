@@ -1,8 +1,3 @@
-
-
-#python3 -m venv topicmodel_env
-#source topicmodel_env/bin/activate
-#
 import spacy
 import pandas as pd
 import argparse

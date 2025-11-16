@@ -1,13 +1,3 @@
-#Hibernia 
-#Hiberniae
-#Hiberniam
-#Hiberniarum 
-#Hiberniis
-#Hibernias
-
-#python3 -m venv topicmodel_env
-#source topicmodel_env/bin/activate
-
 def load_spacy_model(model_name="la_core_web_sm"):
     try:
         nlp = spacy.load(model_name)
@@ -64,7 +54,7 @@ import argparse
 import sys
 from pathlib import Path
 
-# List of Hibernia declensions to search for
+
 HIBERNIA_DECLENSIONS = [
     "Hibernia",
     "Hiberniae",
