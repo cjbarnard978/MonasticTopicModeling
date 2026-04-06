@@ -28,7 +28,10 @@ def setup_custom_entities(nlp):
         "Dunfermlyn",
         "Inchaffrey",
         "Scotch",
-        "Newbattle"
+        "Newbattle",
+        "Edinburgh",
+        "Glasgow",
+        "Inverness"
     ]
 
     if "ner" in nlp.pipe_names:
@@ -72,7 +75,10 @@ Scottish_place_names = [
         "Dunfermline",
         "Dunfermlyn",
         "Inchaffrey",
-        "Newbattle"
+        "Newbattle",
+        "Edinburgh",
+        "Glasgow",
+        "Inverness"
 ]
 
 def save_entities_to_csv(entities, output_file):
