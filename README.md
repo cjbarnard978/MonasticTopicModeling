@@ -11,7 +11,7 @@
 
 ## Loading SpaCy and Running the Scripts
 
-    To download: python -m spacy download en_core_web_smr
+    To download: python -m spacy download en_core_web_sm
     This is only designed to run using the small model since the NLP process is outsourced. 
 
     To run: python filename.py textfilename.txt 
