@@ -10,7 +10,16 @@ HIBERNIA_DECLENSIONS = [
     "Hiberniam",
     "Hiberniarum",
     "Hiberniis",
-    "Hibernias"
+    "Hibernias",
+    "Ibernia",
+    "Iberniae",
+    "Iberniam",
+    "Iberniarum",
+    "Iberniis",
+    "Ibernias",
+    "Insula Sacra",
+    "Archmachia",
+    ""
 ]
 
 def extract_entities_with_cltk(text, cltk_nlp):

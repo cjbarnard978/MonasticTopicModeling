@@ -30,6 +30,7 @@ from gensim.models import Word2Vec
 from gensim.models.word2vec import LineSentence
 from gensim.utils import simple_preprocess
 import logging
+import cltk
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
