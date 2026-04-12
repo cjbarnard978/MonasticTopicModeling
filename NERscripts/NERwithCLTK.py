@@ -19,7 +19,28 @@ HIBERNIA_DECLENSIONS = [
     "Ibernias",
     "Insula Sacra",
     "Archmachia",
-    ""
+    "Cognacta",  
+    "Conacta", 
+    "Conaccia", 
+    "Connachtia",
+    "Connacta",  
+    "Hultonia", 
+    "Ulidia",  
+    "Ultonia", 
+    "Ulvestera", 
+    "Voluntii",
+    "Archmachia",  
+    "Arcmacensis",
+    "Kilmora",
+    "Clara",   
+    "Corcagia",  
+    "Corcensis", 
+    "Dura",
+    "Dungallum",  
+    "Dunum",
+    "Erdini",
+    "Galliva",
+    "Kerriensis comitatus"
 ]
 
 def extract_entities_with_cltk(text, cltk_nlp):
